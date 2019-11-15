@@ -34,9 +34,14 @@ def set_date_year(is_heat_date, date_no_year):
     # Dates are always in the future, so check that the year is correct relative to the current time.
     if dateToCheck < currentTime:
         if (is_heat_date):
-            # For heat dates, add 3 weeks until heat date is > current date
-            while dateToCheck < currentTime:
-                dateToCheck = add_21_days(dateToCheck)
+            # If date to check is within the past 4 weeks, this is a late upload
+            if (dateToCheck > currentTime - datetime.timedelta(weeks=4)):
+                # Add 3 weeks until heat date is > current date
+                while dateToCheck < currentTime:
+                    dateToCheck = add_21_days(dateToCheck)
+            # If the date to check is before the past 4 weeks, this should be a date that occurs next year
+            else:
+                dateToCheck = add_year(dateToCheck)
         else:
             # For due dates, add year, but only if the due date isn't in the previous month and a half
             # Assumption is that calves generally won't be 6 weeks overdue
