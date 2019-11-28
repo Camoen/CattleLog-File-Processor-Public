@@ -14,6 +14,9 @@ This repository holds the complete code for the CattleLog File Processor, as wel
         * [Creation of DataFrames](#creation-of-dataframes)
         * [Date Modifications](#date-modifications)
     * [CattleLog Database Modification](#cattlelog-database-modification)
+        * [CattleLog Database Schema](#cattlelog-database-schema)
+        * [CattleLog Database Creation](#cattlelog-database-creation)
+        * [CattleLog Database Updates](#cattlelog-database-updates)
     * [CattleLog Database Upload](#cattlelog-database-upload)
 
 ## CattleLog File Processor Video Demonstration
@@ -35,7 +38,21 @@ Treatments file, prev databases
 ##### Cattle DataFrame
 ##### Health DataFrame
 ##### Treatments DataFrame
-##### User-Defined Field Dataframe
+##### User-Defined Field DataFrame
 #### Date Modifications
-## CattleLog Database Modification
-## CattleLog Database Upload
+### CattleLog Database Modification
+#### CattleLog Database Schema
+A full description of CattleLog's database design is provided in section 2.1.1 of the CattleLog documentation, located [here]().
+<p align="center"><img src="https://user-images.githubusercontent.com/16565961/69830800-74f30f00-11f4-11ea-82a5-4ffb6d248f87.png" alt="E-R Diagram" width="75%" height=""><br>CattleLog Database E-R Diagram</p>
+
+#### CattleLog Database Creation
+If no local `cattlelog_database.db` file already exists, a new database file is created (if such a file already exists, a backup of the file is stored, and the program skips to the [update](#cattlelog-database-updates) functionality).  The complete code for the database's initial creation is located at https://github.com/Camoen/CattleLog-File-Processor-Public/blob/master/create_database.py.
+
+As shown in the E-R diagram above, the `health` (HealthRecords) and `treatment` (Treatments) table are reliant on `TagNumber` and `BirthDate` from the `cattle` table as foreign keys.  The `ON DELETE CASCADE` clause is included to ensure that health records and treatments are deleted if their associated `cattle` entity is deleted.
+
+#### CattleLog Database Updates
+Once a database file has been located or created, CFP uses the [generated DataFrames](creation-of-dataframes) to update the database file.  The complete code for the update functionality is located at https://github.com/Camoen/CattleLog-File-Processor-Public/blob/master/update_database.py.
+
+##### Mistagged Animal Functionality
+##### Removal of Unnecessary Records
+### CattleLog Database Upload
