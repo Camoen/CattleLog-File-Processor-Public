@@ -53,6 +53,29 @@ As shown in the E-R diagram above, the `health` (HealthRecords) and `treatment` 
 #### CattleLog Database Updates
 Once a database file has been located or created, CFP uses the [generated DataFrames](creation-of-dataframes) to update the database file.  The complete code for the update functionality is located at https://github.com/Camoen/CattleLog-File-Processor-Public/blob/master/update_database.py.
 
+A majority of the update logic consists of `INSERT OR REPLACE` queries for the `cattle`, `health`, `treatment`, and `userFields` tables.
+
 ##### Mistagged Animal Functionality
+Since the database is completely abstracted away from the record-keeper, it became necessary to add a way of "resetting" (completely removing) erroneous records for a given animal.  In the "Treatments.xls" input file, the second spreadshset includes data about animals that have left the farm.  There are four fields: Index # (`TagNumber`), Brthdate (`BirthDate`), Date (`DateLeft`), and Reason.  The latter of these two fields are used to indicate the date an animal left the herd and the reason for leaving.  If the "Reason" field is set to the string "Mistagged", all records for the associated animal (as indicated by `TagNumber` and `BirthDate`) are completely removed from the database.  This functionality was first added when a newborn calf was given an incorrect `TagNumber`, hence the use of "Mistagged" as the keyword.
+
 ##### Removal of Unnecessary Records
+Some of the cattle that are raised on the VanWagner Family Farm belong to another farm.  Each of these animals has a `BarnName` attribute that starts with the letter `R`.  These records (and only these records) can be removed from the database when the specific animals have left the farm.  Other animal records should always be maintained, even if the animal has left the farm.
+
+When any animal leaves the farm, the record-keeper sets their status to "Left Herd" in PCDART, so the output .csv files no longer include data about these animals.  Furthermore, the record-keeper removes this animal from the "Treatments.xls" file.  Therefore, no data about an animal that has left the farm will appear in the generated dataframes, which makes it relatively simple to programmatically identify "missing" animals (animals that have left).  Remember, however, that most animal records must be maintained in perpetuity; only animals with a `BarnName` that begins with an `R` should be purged from the database.  
+
+To implement this functionality, during each database update, the program creates a table called `keep_matches` to record all animals that still exist in the four input files.  Cattle records are purged from the database if (1) the animal does not appear in the `keep_matches` table AND (2) the animal has a `BarnName` starting with `R`.  This leaves all other cattle records intact, regardless of whether or not they have left the farm.  The following bit of SQL implements this logic:
+
+```
+c.execute("""
+     DELETE FROM cattle 
+     WHERE NOT EXISTS
+          (SELECT * FROM keep_matches km
+          WHERE (cattle.TagNumber =  km.TagNumber AND cattle.BirthDate =  km.BirthDate))
+     AND cattle.BarnName LIKE 'R%'
+""")
+```
+
+
+
+
 ### CattleLog Database Upload
