@@ -51,7 +51,7 @@ If no local `cattlelog_database.db` file already exists, a new database file is 
 As shown in the E-R diagram above, the `health` (HealthRecords) and `treatment` (Treatments) table are reliant on `TagNumber` and `BirthDate` from the `cattle` table as foreign keys.  The `ON DELETE CASCADE` clause is included to ensure that health records and treatments are deleted if their associated `cattle` entity is deleted.
 
 #### CattleLog Database Updates
-Once a database file has been located or created, CFP uses the [generated DataFrames](creation-of-dataframes) to update the database file.  The complete code for the update functionality is located at https://github.com/Camoen/CattleLog-File-Processor-Public/blob/master/update_database.py.
+Once a database file has been located or created, CFP uses the [generated DataFrames](#creation-of-dataframes) to update the database file.  The complete code for the update functionality is located at https://github.com/Camoen/CattleLog-File-Processor-Public/blob/master/update_database.py.
 
 A majority of the update logic consists of `INSERT OR REPLACE` queries for the `cattle`, `health`, `treatment`, and `userFields` tables.
 
