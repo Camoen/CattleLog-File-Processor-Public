@@ -30,7 +30,6 @@ Beyond the development of this Python executable, an Android app, named CattleLo
 A report detailing the major features and functionality of the entire CattleLog project (both the CattleLog File Processor and CattleLog mobile application) can be found at https://github.com/Camoen/CattleLog-File-Processor-Public/files/3903171/CattleLog.Project.Report.pdf.
 
 ## CattleLog File Processor Features
-_This section is currently a WIP._
 ### Input File Validation
 If the user selects the same input file twice, fails to select an input file, or enters an invalid filepath, the program ceases execution and prompts the user to try again.  If CFP discovers that one of the input files is in an invalid format during [data preprocessing](#data-preprocessing), the program stops execution before any attempt is made to update the CattleLog database.  It then prompts the user to try running the program again (with valid files).
 
@@ -68,7 +67,7 @@ Out of all the details provided by PCDART’s output .csv files, the single most
 
 Unfortunately, PCDART’s output files only include the month and day, but not the year, of the next expected heat date.  Furthermore, all of the NextExpHeat dates output by PCDART occur either on the present day or on a future date (never on a date prior to the day on which the output file was generated).  For ease of querying within the CattleLog mobile app, CFP appends the current year to each of these dates during preprocessing.  If the resulting date is prior to the current day, but within the past 4 weeks, the NextExpHeat date is adjusted by the addition of one or two heat cycles (21 days or 42 days, whichever is required).  If, instead, the resulting date is prior to the current day, but not within the past 4 weeks, the NextExpHeat date is adjusted by the addition of one year.  This logic assumes that CFP will be utilized within 4 weeks of generating the input files on PCDART (standard procedure is to generate these files on a weekly basis—three additional weeks were added as a user-friendly buffer).
 
-The implementation logic is better illustrated by an example, as shown in the table below.  Further implications of the addition of years to the "NextExpHeat" attribute are discussed in section 2.2.2 of the CattleLog Project Report, or in the [Heats List](https://github.com/Camoen/CattleLog#heats-list) section of CattleLog mobile application README.
+The implementation logic is better illustrated by an example, as shown in the table below.  Further implications of the addition of years to the "NextExpHeat" attribute are discussed in section 2.2.2 of the [CattleLog Project Report](#cattlelog-project-report), or in the [Heats List](https://github.com/Camoen/CattleLog#heats-list) section of CattleLog mobile application README.
 <p align="center"><img src="https://user-images.githubusercontent.com/16565961/69835072-ceffce80-120c-11ea-9d0a-1afd0c07877d.png" alt='NextExpHeat date adjustment logic.  Final result must be current date or a future date.' width="80%" height=""><br>NextExpHeat date adjustment logic.  Final result <b>must</b> be current date or a future date.</p>
 
 
